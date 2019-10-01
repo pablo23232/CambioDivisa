@@ -6,10 +6,12 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -31,6 +33,7 @@ public class CambioDivisa extends Application {
 		numText2 = new TextField();
 		numText2.setPromptText("0");
 		numText2.setMaxWidth(80);
+		numText2.setEditable(false);
 		
 		DivisaCombo = new ComboBox<String>();
 		DivisaCombo.getItems().addAll("Euro", "Libra", "Dolar","Yen");
@@ -63,43 +66,57 @@ public class CambioDivisa extends Application {
 	
 
 	private Object onChangeButtonAction(ActionEvent e) {
-		Divisa euro = new Divisa("Euro", 1.0);
-		Divisa libra = new Divisa("Libra", 0.8873);
-		Divisa dolar = new Divisa("Dolar", 1.2007);
-		Divisa yen = new Divisa("Yen", 133.59);
-		Divisa origen = euro;
-		Divisa destino = libra; 
-		switch(DivisaCombo.getSelectionModel(). getSelectedItem()) {
-		case "Euro":
-			origen = euro;
-			break;
-		case "Libra":
-			 origen = libra;
-			 break;
-		case "Yen":
-			origen = yen;
-			break;
-		case "Dolar":
-			origen = dolar;
-			break;
+		try {
+			if(numText.getText().isEmpty()) {
+			Divisa euro = new Divisa("Euro", 1.0);
+			Divisa libra = new Divisa("Libra", 0.8873);
+			Divisa dolar = new Divisa("Dolar", 1.2007);
+			Divisa yen = new Divisa("Yen", 133.59);
+			Divisa origen = euro;
+			Divisa destino = libra; 
+			switch(DivisaCombo.getSelectionModel(). getSelectedItem()) {
+			case "Euro":
+				origen = euro;
+				break;
+			case "Libra":
+				 origen = libra;
+				 break;
+			case "Yen":
+				origen = yen;
+				break;
+			case "Dolar":
+				origen = dolar;
+				break;
+			}
+			switch(DivisaCombo2.getSelectionModel(). getSelectedItem()) {
+			case "Euro":
+				destino = euro;
+				break;
+			case "Libra":
+				 destino = libra;
+				 break;
+			case "Yen":
+				destino = yen;
+				break;
+			case "Dolar":
+				destino = dolar;
+				break;
+			}
+			
+			Double cantidad = Double.parseDouble(numText.getText());    
+			numText2.setPromptText(String.valueOf(destino.fromEuro(origen.toEuro(cantidad))));
+			}
+			else
+			{
+				throw new NumberFormatException();
+			}
+		} catch (NumberFormatException e1) {
+			Alert alert1 = new Alert(AlertType.WARNING);
+			alert1.setTitle("");
+			alert1.setHeaderText("Error al introducir los datos");
+			alert1.showAndWait();
+			
 		}
-		switch(DivisaCombo2.getSelectionModel(). getSelectedItem()) {
-		case "Euro":
-			destino = euro;
-			break;
-		case "Libra":
-			 destino = libra;
-			 break;
-		case "Yen":
-			destino = yen;
-			break;
-		case "Dolar":
-			destino = dolar;
-			break;
-		}
-		
-		Double cantidad = Double.parseDouble(numText.getText());    
-		numText2.setPromptText(String.valueOf(destino.fromEuro(origen.toEuro(cantidad)))); // convierte 2000 yenes en dólares
 		return e;
 		
 	}
